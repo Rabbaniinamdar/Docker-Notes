@@ -377,6 +377,230 @@ mvn compile jib:dockerBuild -Dimage=cards-service
 | Docker Required      | ✅ Yes             | ✅ Yes (via pack)     | ❌ No                    |
 | Integration          | CLI               | Pack CLI              | Maven/Gradle             |
 
+Here is a detailed explanation of **Port Mapping (aka Port Forwarding or Port Publishing)** — ideal for your Docker notes:
+
+---
+
+# 🔀 What is Port Mapping / Port Forwarding / Port Publishing?
+
+By default, **Docker containers run in an isolated network** inside the Docker host. This means their internal ports are not directly accessible from your local machine or the internet.
+
+**Port mapping** is a mechanism that **binds a port on the Docker host to a port inside the container**, enabling external access to services running inside the container.
+
+---
+
+## 🧱 Syntax of Port Mapping
+
+```bash
+docker run -p <host_port>:<container_port> <image>
+```
+
+- `host_port`: The port on your **local machine (or Docker host)** that you want to expose.
+- `container_port`: The port inside the **Docker container** where the application is actually running.
+
+---
+
+## 📦 Example: Running `accounts-service`
+
+```bash
+docker run -p 8081:8080 accounts-service
+```
+
+- The **Spring Boot app** runs on port `8080` inside the container.
+- Port `8081` on the **host** is mapped to port `8080` inside the **container**.
+- You can now access the application via `http://localhost:8081`.
+
+---
+
+## 📊 Visual Explanation
+
+```
+        +-------------------+          Port 8081          +-------------------------+
+        |    Local Machine  | -------------------------> |  Docker Host            |
+        |  Browser / cURL   |                            |                         |
+        +-------------------+                            |  +-------------------+  |
+                                                         |  |  Docker Container |  |
+                                                         |  |  Spring Boot App  |  |
+                                                         |  |  LISTENING ON     |  |
+                                                         |  |     PORT 8080     |  |
+                                                         |  +-------------------+  |
+                                                         +-------------------------+
+```
+
+---
+
+## ✅ Key Points
+
+- Port mapping enables external systems (e.g., browsers or APIs) to **communicate with containerized services**.
+- You can map multiple containers to different external ports even if they all run on the same internal port.
+- Useful in **local development**, **testing**, and **deployment scenarios**.
+
+Here’s a clean and detailed explanation of **Docker Compose** that you can use for your notes — including why it’s used, what it does, and its key advantages:
+
+---
+
+# 🧩 **Docker Compose: Managing Multiple Containers**
+
+---
+
+## ❓ Why Not Just Use the Docker CLI?
+
+Running multiple containers (e.g., app, database, cache) using Docker CLI:
+
+- Requires **multiple long and complex commands**
+- Can lead to **errors and inconsistencies**
+- Is **hard to maintain** and manage in version control
+- Lacks **built-in orchestration** for dependencies and networking
+
+👉 Therefore, **Docker Compose** is a better alternative when working with multi-container setups.
+
+---
+
+## 🚀 What is Docker Compose?
+
+**Docker Compose** is a **Docker tool** that lets you define, run, and manage multi-container applications using a **single YAML configuration file (`docker-compose.yml`)**.
+
+It lets you:
+- Define each service (e.g., app, DB, message queue)
+- Set up shared networks and volumes
+- Specify environment variables, ports, dependencies, etc.
+
+---
+
+## ⚙️ Docker Compose File Example
+
+A basic `docker-compose.yml` for a Spring Boot app and MySQL:
+
+```yaml
+version: '3.8'
+
+services:
+  app:
+    image: accounts-service
+    ports:
+      - "8081:8080"
+    depends_on:
+      - db
+
+  db:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: accountsdb
+    ports:
+      - "3307:3306"
+```
+
+---
+
+## ✅ Advantages of Docker Compose
+
+| Feature                     | Benefit                                                                 |
+|-----------------------------|-------------------------------------------------------------------------|
+| 📦 Centralized Config       | Manage all services in a **single `docker-compose.yml`** file           |
+| 🚀 One Command Setup        | `docker-compose up` brings up all containers at once                    |
+| 🔗 Built-in Networking      | Containers automatically **communicate by service name** (e.g., `db`)   |
+| 📈 Easy Scaling             | Scale services with `--scale` flag                                      |
+| 🔁 Lifecycle Management     | Commands like `start`, `stop`, `restart`, and `down` simplify workflows |
+| 📂 Volume & Env Support     | Define **volumes**, **networks**, and **env variables** per service     |
+| 📝 Version Controlled Infra | YAML file can be committed to Git for reproducibility                   |
+
+---
+
+## 🧪 Common Commands
+
+```bash
+# Start all services in the background
+docker-compose up -d
+
+# Stop all containers
+docker-compose down
+
+# View logs from all services
+docker-compose logs
+
+# Restart specific service
+docker-compose restart app
+
+# Scale a service (e.g., run 3 instances of 'app')
+docker-compose up --scale app=3
+```
+Here's a well-organized summary of all **Maven** and **Docker** commands you've provided, categorized for clarity:
+
+---
+
+## ✅ **Maven Commands**
+
+| Command | Description |
+|--------|-------------|
+| `mvn clean install -Dmaven.test.skip=true` | Generates a JAR file in the `target` folder while skipping tests |
+| `mvn spring-boot:run` | Runs the Spring Boot application directly |
+| `mvn spring-boot:build-image` | Creates a Docker image using Buildpacks (no Dockerfile needed) |
+| `mvn compile jib:dockerBuild` | Creates a Docker image using Google Jib (no Dockerfile needed) |
+
+---
+
+## 🐳 **Docker Commands**
+
+### 🔨 **Image Management**
+
+| Command | Description |
+|---------|-------------|
+| `docker build . -t eazybytes/accounts:s4` | Build Docker image from Dockerfile with a tag |
+| `docker images` | List all Docker images |
+| `docker image inspect <image-id>` | Show detailed info about an image |
+| `docker image rm <image-id>` | Remove Docker image(s) |
+| `docker image push docker.io/eazybytes/accounts:s4` | Push image to Docker registry |
+| `docker image pull docker.io/eazybytes/accounts:s4` | Pull image from Docker registry |
+
+---
+
+### 🚀 **Container Lifecycle**
+
+| Command | Description |
+|---------|-------------|
+| `docker run -p 8080:8080 eazybytes/accounts:s4` | Run container from image and map ports |
+| `docker ps` | List running containers |
+| `docker ps -a` | List all containers, including stopped ones |
+| `docker container start <container-id>` | Start a stopped container |
+| `docker container stop <container-id>` | Gracefully stop a running container |
+| `docker container kill <container-id>` | Force stop a container |
+| `docker container restart <container-id>` | Restart a container |
+| `docker container rm <container-id>` | Remove container(s) |
+| `docker container prune` | Remove **all** stopped containers |
+
+---
+
+### 📝 **Container Logs & Info**
+
+| Command | Description |
+|---------|-------------|
+| `docker container inspect <container-id>` | View container details |
+| `docker container logs <container-id>` | View logs from a container |
+| `docker container logs -f <container-id>` | Follow live logs from a container |
+| `docker container pause <container-id>` | Pause processes in a container |
+| `docker container unpause <container-id>` | Resume paused container processes |
+
+---
+
+### 🧱 **Docker Compose**
+
+| Command | Description |
+|---------|-------------|
+| `docker compose up` | Create and start services defined in docker-compose.yml |
+| `docker compose down` | Stop and remove services |
+| `docker compose start` | Start existing containers from the compose file |
+
+---
+
+### 💾 **Creating Specific Containers**
+
+| Command | Description |
+|---------|-------------|
+| `docker run -p 3306:3306 --name accountsdb -e MYSQL_ROOT_PASSWORD=root -e MYSQL_DATABASE=accountsdb -d mysql` | Create MySQL container |
+| `docker run -p 6379:6379 --name eazyredis -d redis` | Create Redis container |
+| `docker run -p 8080:8080 -e KEYCLOAK_ADMIN=admin -e KEYCLOAK_ADMIN_PASSWORD=admin quay.io/keycloak/keycloak:22.0.3 start-dev` | Run Keycloak container |
+
 
 
 
