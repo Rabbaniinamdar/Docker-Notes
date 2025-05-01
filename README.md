@@ -276,7 +276,83 @@ Docker architecture follows a **client-server model**, where the **Docker Client
 Here is a **detailed and well-organized explanation of the 3 commonly used approaches to generate Docker images** from microservices — ideal for your notes:
 
 ---
+### 📦 **Docker Images — Detailed Notes**
 
+---
+
+## 🔹 **What is a Docker Image?**
+A **Docker image** is a **read-only template** used to create containers. It includes:
+- The application code
+- Runtime (e.g., Java, Python)
+- System libraries & dependencies
+- Configuration files
+
+Images are **immutable**, **versioned**, and **portable** — like a snapshot of a filesystem with an application pre-installed.
+
+---
+
+## 🔹 **How Docker Images Work**
+- Images are made up of **layers**.
+- Each instruction in a `Dockerfile` (like `RUN`, `COPY`, etc.) creates a new **layer**.
+- Layers are cached and reused across builds to save time and disk space.
+
+**Example of layered image:**
+```Dockerfile
+FROM openjdk:17          # Base image
+COPY target/app.jar /app.jar  # App layer
+ENTRYPOINT ["java", "-jar", "/app.jar"] # Runtime
+```
+
+---
+
+## 🔹 **Common Commands for Docker Images**
+
+| Command | Description |
+|--------|-------------|
+| `docker images` | Lists all local Docker images |
+| `docker build -t myapp:latest .` | Builds an image from a Dockerfile |
+| `docker image inspect <image-id>` | Shows metadata about the image |
+| `docker rmi <image-id>` | Removes a Docker image |
+| `docker pull <image>` | Downloads an image from Docker Hub or registry |
+| `docker push <image>` | Uploads an image to Docker Hub or registry |
+
+---
+
+## 🔹 **Image Tags**
+Images are often tagged as:  
+```bash
+eazybytes/accounts:s4
+```
+Where:
+- `eazybytes/accounts` is the repository name
+- `s4` is the tag (e.g., version)
+
+If no tag is specified, **`latest`** is used by default.
+
+---
+
+## 🔹 **Image Naming Best Practices**
+- Use clear, versioned tags: `v1.0`, `dev`, `prod`, etc.
+- Use your Docker Hub username or org as a prefix:  
+  `yourname/project:tag`
+
+---
+
+## 🔹 **Dockerfile → Image → Container Flow**
+1. Write a `Dockerfile`
+2. Build the image: `docker build -t app:1.0 .`
+3. Run a container from the image:  
+   `docker run -p 8080:8080 app:1.0`
+
+---
+
+## 🔹 **Where are Images Stored?**
+- Locally: `/var/lib/docker`
+- Remotely: Docker Hub, AWS ECR, Google GCR, GitHub Container Registry, etc.
+
+---
+
+Would you like a **diagram** showing the Dockerfile → Image → Container flow or the **layered structure** of a Docker image?
 # 🛠️ Generating Docker Images for Microservices
 
 To containerize microservices, Docker images must be created. There are **three commonly used methods** for generating Docker images:
