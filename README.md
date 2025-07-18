@@ -146,10 +146,6 @@ A **virtual machine** is a software emulation of a complete physical machine tha
 - Enhances **scalability** and **resilience**.
 
 
-Here’s a refined and **well-structured explanation of Docker Architecture** based on your points — ideal for your notes or presentations:
-
----
-
 # 🏗️ Docker Architecture
 
 Docker architecture follows a **client-server model**, where the **Docker Client** interacts with the **Docker Daemon (Server)** using **REST APIs** to build, run, and manage containers.
@@ -405,7 +401,7 @@ docker build -t accounts-service:latest .
 
 ### 📦 Build Command:
 ```bash
-pack build loans-service --path . --builder paketobuildpacks/builder:base
+./mvnw spring-boot:build-image -Dspring-boot.build-image.imageName=<image-name>:<vesrion>
 ```
 
 This will:
@@ -453,9 +449,7 @@ mvn compile jib:dockerBuild -Dimage=cards-service
 | Docker Required      | ✅ Yes             | ✅ Yes (via pack)     | ❌ No                    |
 | Integration          | CLI               | Pack CLI              | Maven/Gradle             |
 
-Here is a detailed explanation of **Port Mapping (aka Port Forwarding or Port Publishing)** — ideal for your Docker notes:
 
----
 
 # 🔀 What is Port Mapping / Port Forwarding / Port Publishing?
 
@@ -511,9 +505,6 @@ docker run -p 8081:8080 accounts-service
 - You can map multiple containers to different external ports even if they all run on the same internal port.
 - Useful in **local development**, **testing**, and **deployment scenarios**.
 
-Here’s a clean and detailed explanation of **Docker Compose** that you can use for your notes — including why it’s used, what it does, and its key advantages:
-
----
 
 # 🧩 **Docker Compose: Managing Multiple Containers**
 
@@ -601,9 +592,6 @@ docker-compose restart app
 # Scale a service (e.g., run 3 instances of 'app')
 docker-compose up --scale app=3
 ```
-Here's a well-organized summary of all **Maven** and **Docker** commands you've provided, categorized for clarity:
-
----
 
 ## ✅ **Maven Commands**
 
