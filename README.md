@@ -523,6 +523,123 @@ Running multiple containers (e.g., app, database, cache) using Docker CLI:
 
 ---
 
+## 🧠 What is Docker Network?
+
+**Docker Network** allows **containers to communicate** with each other and with the outside world (like your browser or APIs).
+
+Think of it like virtual LANs (Local Area Networks) inside your machine where containers can:
+
+* Talk to each other (using container names).
+* Be isolated or exposed as needed.
+
+---
+
+## 🧰 Types of Docker Networks
+
+### 1. **Bridge (default)**
+
+* Created by default.
+* Best for single-host container communication.
+* Each container gets its own IP.
+* You can refer to containers by name if on the same bridge network (custom bridge, not `bridge` default).
+
+```bash
+docker network create my-bridge
+docker run -d --network my-bridge --name app1 nginx
+docker run -it --network my-bridge busybox ping app1
+```
+
+---
+
+### 2. **Host**
+
+* Uses the **host’s network stack**.
+* No isolation between container and host (no `localhost:8080` → use just `:8080`).
+
+```bash
+docker run --network host nginx
+```
+
+🔒 Use **only when you need high performance** (e.g., low-latency apps) and you trust the container.
+
+---
+
+### 3. **None**
+
+* The container has **no network access**.
+
+```bash
+docker run --network none nginx
+```
+
+Used for **testing or isolating** a container from the network.
+
+---
+
+### 4. **Overlay**
+
+* Used with **Docker Swarm** (multi-host communication).
+* Allows containers on different hosts to talk securely.
+
+---
+
+## 🧱 Custom Docker Network (Bridge) – Best Practice
+
+### ✅ Why use custom network?
+
+* Enables **DNS-based discovery**: containers can use each other's names (`db`, `pgadmin`).
+* Helps avoid hardcoding IPs.
+* Better isolation & flexibility.
+
+### Example:
+
+```bash
+docker network create my-network
+```
+
+Attach containers:
+
+```bash
+docker run -d --name db --network my-network postgres
+docker run -d --name pgadmin --network my-network pgadmin4
+```
+
+Then they can talk using names:
+
+```bash
+docker exec -it pgadmin ping db
+```
+
+---
+
+## 🔧 Docker Network Commands
+
+| Command                                       | Description                           |
+| --------------------------------------------- | ------------------------------------- |
+| `docker network ls`                           | List all networks                     |
+| `docker network inspect <name>`               | View details of a network             |
+| `docker network create <name>`                | Create a custom network               |
+| `docker network connect <net> <container>`    | Connect container to a network        |
+| `docker network disconnect <net> <container>` | Disconnect container from a network   |
+| `docker network rm <name>`                    | Delete a network (must not be in use) |
+
+---
+
+## 📓 Summary Notes
+
+| Concept                  | Description                                                     |
+| ------------------------ | --------------------------------------------------------------- |
+| **Network**              | Virtual connection between containers                           |
+| **Bridge Network**       | Default or custom, best for container-to-container              |
+| **Host Network**         | Shares host networking, fast but less isolated                  |
+| **None Network**         | No network access                                               |
+| **Overlay Network**      | Multi-host networking (Swarm only)                              |
+| **DNS-based resolution** | Use container names instead of IPs when on same network         |
+| **Best Practice**        | Always use a **custom bridge network** for multi-container apps |
+
+---
+
+
 ## 🚀 What is Docker Compose?
 
 **Docker Compose** is a **Docker tool** that lets you define, run, and manage multi-container applications using a **single YAML configuration file (`docker-compose.yml`)**.
