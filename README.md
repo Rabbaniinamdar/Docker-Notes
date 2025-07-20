@@ -781,6 +781,12 @@ docker-compose up --scale app=3
 | `docker run -p 3306:3306 --name accountsdb -e MYSQL_ROOT_PASSWORD=root -e MYSQL_DATABASE=accountsdb -d mysql` | Create MySQL container |
 | `docker run -p 6379:6379 --name eazyredis -d redis` | Create Redis container |
 | `docker run -p 8080:8080 -e KEYCLOAK_ADMIN=admin -e KEYCLOAK_ADMIN_PASSWORD=admin quay.io/keycloak/keycloak:22.0.3 start-dev` | Run Keycloak container |
+| `docker -d --name db -e POSTGRES_PASSWORD=root postgres:14` | Create Postgres container |
+| `docker run -d --name pgadmin -e PGADMIN_DEFAULT_EMAIL=user@gmail.com -e PGADMIN_DEFAULT_PASSWORD=root dpage/pgadmin4` | Create PGAdmin container |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------- |
+| `docker network create my-network`                                                                                                                     | Creates a custom Docker network named `my-network`.                                                               |
+| `docker run -d --name db --network my-network -e POSTGRES_PASSWORD=root postgres:14`                                                                   | Runs the Postgres container in `my-network`.                                                                      |
+| `docker run -d --name pgadmin --network my-network -e PGADMIN_DEFAULT_EMAIL=user@gmail.com -e PGADMIN_DEFAULT_PASSWORD=root -p 8080:80 dpage/pgadmin4` | Runs pgAdmin in `my-network` and exposes it on host port `8080` so you can access it via `http://localhost:8080`. |
 
 
 
